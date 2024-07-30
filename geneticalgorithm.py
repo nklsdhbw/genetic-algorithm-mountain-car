@@ -33,7 +33,7 @@ def selection(population, fitnesses, elite_size):
     selected = random.choices(population, weights=adjusted_fitnesses, k=len(population) - elite_size)
     return selected
 
-def crossover(parent1, parent2, crossover_rate, model_type='linear'):
+def crossover(parent1, parent2, crossover_rate, state_size, model_type='linear'):
     if model_type == 'linear':
         if random.random() < crossover_rate:
             point = random.randint(1, state_size - 1)
@@ -56,7 +56,7 @@ def crossover(parent1, parent2, crossover_rate, model_type='linear'):
                     setattr(child2, key, np.vstack((getattr(parent2, key)[:point, :], getattr(parent1, key)[point:, :])))
         return child1, child2
 
-def mutate(chromosome, mutation_rate, model_type='linear'):
+def mutate(chromosome, mutation_rate, state_size, action_size, model_type='linear'):
     if model_type == 'linear':
         if random.random() < mutation_rate:
             index = random.randint(0, state_size - 1)

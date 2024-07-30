@@ -38,8 +38,8 @@ def run_genetic_algorithm(model_type='linear'):
         for i in range(0, len(selected_population) - 1, 2):
             parent1 = selected_population[i]
             parent2 = selected_population[i + 1]
-            child1, child2 = crossover(parent1=parent1, parent2=parent2, crossover_rate=CROSSOVER_RATE, model_type=model_type)
-            next_population.extend([mutate(chromosome=child1, mutation_rate=MUTATION_RATE, model_type=model_type), mutate(chromosome=child2, mutation_rate=MUTATION_RATE, model_type=model_type)])
+            child1, child2 = crossover(parent1=parent1, parent2=parent2, crossover_rate=CROSSOVER_RATE, state_size=STATE_SIZE, model_type=model_type)
+            next_population.extend([mutate(chromosome=child1, mutation_rate=MUTATION_RATE, state_size=STATE_SIZE, action_size=ACTION_SIZE, model_type=model_type), mutate(chromosome=child2, mutation_rate=MUTATION_RATE, model_type=model_type)])
 
         next_population.extend(elites)
 
