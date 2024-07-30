@@ -2,6 +2,7 @@ import numpy as np
 import gymnasium as gym
 import random
 import pickle
+from nn import NeuralNetwork
 
 # Hyperparameter
 population_size = 100
@@ -10,39 +11,20 @@ mutation_rate = 0.1
 crossover_rate = 0.5
 elitism = True
 elite_size = 5
-hidden_size = 10  # Größe der versteckten Schicht
+
 
 # Environment
 env = gym.make('MountainCar-v0')
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
+hidden_size = 10
 
-class NeuralNetwork:
-    def __init__(self):
-        self.w1 = np.random.randn(state_size, hidden_size)
-        self.b1 = np.random.randn(hidden_size)
-        self.w2 = np.random.randn(hidden_size, action_size)
-        self.b2 = np.random.randn(action_size)
-
-    def forward(self, state):
-        z1 = np.dot(state, self.w1) + self.b1
-        a1 = np.tanh(z1)
-        z2 = np.dot(a1, self.w2) + self.b2
-        return z2
-
-    def copy(self):
-        new_nn = NeuralNetwork()
-        new_nn.w1 = np.copy(self.w1)
-        new_nn.b1 = np.copy(self.b1)
-        new_nn.w2 = np.copy(self.w2)
-        new_nn.b2 = np.copy(self.b2)
-        return new_nn
 
 def initialize_population(model_type='linear'):
     if model_type == 'linear':
         return [np.random.randn(state_size, action_size) for _ in range(population_size)]
     else:
-        return [NeuralNetwork() for _ in range(population_size)]
+        return [NeuralNetwork(hidden_size=hidden_size, state_size=state_size, action_size=action_size) for _ in range(population_size)]
 
 def fitness(chromosome, model_type='linear'):
     state, _ = env.reset()
