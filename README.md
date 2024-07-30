@@ -1,12 +1,10 @@
 
 
-#### Project Overview
-
+# 🚗 Solving OpenAI's Gymnasiums Mountain Car Problem with a generic algorithm
+## Project Overview
 This project implements a genetic algorithm to solve the MountainCar-v0 environment from OpenAI's Gymnasium. The algorithm uses two types of models: a linear model and a neural network model. The genetic algorithm optimizes the models to achieve the best performance in the MountainCar-v0 environment.
 
----
-
-#### Directory Structure
+## 📂 Directory Structure
 
 ```
 project-root/
@@ -27,9 +25,7 @@ project-root/
 └── train.py
 ```
 
----
-
-#### Files Description
+## 📄 Files Description
 
 1. **geneticalgorithm.py**:
    - Contains the main genetic algorithm functions, including initialization, fitness evaluation, selection, crossover, and mutation.
@@ -51,17 +47,20 @@ project-root/
 
 ---
 
-#### Installation
+## ⚙️ Installation
 
-1. Clone the repository to your local machine.
-2. Navigate to the project directory.
-3. Create a virtual environment using `venv`:
+### 🐍 Install Python 3.12
+Download and install [Python3.12](https://www.python.org/downloads/)
+
+### ⬇️ Clone the repository to your local machine
+	git clone https://github.com/nklsdhbw/genetic-algorithm-mountain-car.git
+and change to the project directory
+### 🔨 Create a virtual environment using `venv`:
 
 ```sh
-python -m venv .venv
+python3.12 -m venv .venv
 ```
-
-4. Activate the virtual environment:
+### 🚀 Activate the virtual environment:
 
    - On Windows:
 
@@ -75,7 +74,7 @@ python -m venv .venv
    source .venvbin/activate
    ```
 
-5. Install the required packages using pip:
+### 📦 Install the required packages using pip:
 
 ```sh
 pip install -r requirements.txt
@@ -83,10 +82,10 @@ pip install -r requirements.txt
 
 ---
 
-#### Usage
+## Usage
 
 
-1. **Training the Models:**
+1. ### Training the Models:
 
 To train the models using the genetic algorithm, run `train.py` with the desired parameters. Example:
 
@@ -115,7 +114,7 @@ If these arguments are not set for the `nn` model, the default values will be us
 
 
 
-2. **Running the Models:**
+2.  ### Running the Models:
 
 To run and evaluate the trained models, use `run.py` with the model type `('nn' or 'linear')`. Example:
 
@@ -123,8 +122,6 @@ To run and evaluate the trained models, use `run.py` with the model type `('nn' 
 python run.py --model nn
 ```
 
----
-
-#### Acknowledgments
+## Acknowledgments
 
 This project uses the MountainCar-v0 environment from OpenAI's Gymnasium and relies on several Python libraries, including numpy, gymnasium, and pygame.
