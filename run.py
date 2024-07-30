@@ -31,11 +31,11 @@ def run_model(chromosome, model_type='linear'):
 
 if __name__ == "__main__":
     print("Running the best linear model...")
-    best_chromosome_linear = load_model('best_chromosome_linear.pkl')
+    best_chromosome_linear = load_model('./models/best_chromosome_linear.pkl')
     total_reward_linear = run_model(best_chromosome_linear, model_type='linear')
     print('Total reward using the best linear model:', total_reward_linear)
 
     print("Running the best neural network model...")
-    best_chromosome_nn = load_model('best_chromosome_nn.pkl')
+    best_chromosome_nn = load_model('./models/best_chromosome_nn.pkl')
     total_reward_nn = run_model(best_chromosome_nn, model_type='nn')
     print('Total reward using the best neural network model:', total_reward_nn)
