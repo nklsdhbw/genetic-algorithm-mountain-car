@@ -1,7 +1,9 @@
 import numpy as np
 import gymnasium as gym
 import pickle
-from geneticalgorithm import NeuralNetwork
+import argparse
+import os
+import re
 
 # Environment
 env = gym.make('MountainCar-v0', render_mode='human')
@@ -30,12 +32,17 @@ def run_model(chromosome, model_type='linear'):
     return total_reward  # Total reward (negative value) reflects the number of steps
 
 if __name__ == "__main__":
-    print("Running the best linear model...")
-    best_chromosome_linear = load_model('./models/best_chromosome_linear.pkl')
-    total_reward_linear = run_model(best_chromosome_linear, model_type='linear')
-    print('Total reward using the best linear model:', total_reward_linear)
+    parser = argparse.ArgumentParser(description='Run the trained model for MountainCar.')
+    models = os.listdir("./models")
+    if not models:
+        raise FileNotFoundError("No models found in the models directory. Please run train.py first.")
+        exit(1)
+    models = [re.findall(r"best_chromosome_(\w+).pkl", model) for model in models]
+    models = sum(models, [])
+    parser.add_argument("--model", type=str, choices=models, required=True, help="Specify the model type to run (linear or nn).")
+    args = parser.parse_args()
 
-    print("Running the best neural network model...")
-    best_chromosome_nn = load_model('./models/best_chromosome_nn.pkl')
-    total_reward_nn = run_model(best_chromosome_nn, model_type='nn')
-    print('Total reward using the best neural network model:', total_reward_nn)
+    print(f"Running the best {args.model} model...")
+    best_chromosome = load_model(f"./models/best_chromosome_{args.model}.pkl")
+    total_reward = run_model(best_chromosome, model_type=args.model)
+    print(f"Total reward using the best linear model: {total_reward}")
