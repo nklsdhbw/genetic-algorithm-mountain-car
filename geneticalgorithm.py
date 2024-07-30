@@ -1,7 +1,6 @@
 import numpy as np
 import gymnasium as gym
 import random
-import pickle
 from nn import NeuralNetwork
 
 
