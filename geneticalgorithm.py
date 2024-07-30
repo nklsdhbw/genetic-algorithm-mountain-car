@@ -4,13 +4,6 @@ import random
 import pickle
 from nn import NeuralNetwork
 
-# Hyperparameter
-population_size = 100
-num_generations = 100
-mutation_rate = 0.1
-crossover_rate = 0.5
-elitism = True
-elite_size = 5
 
 
 # Environment
@@ -20,7 +13,7 @@ action_size = env.action_space.n
 hidden_size = 10
 
 
-def initialize_population(model_type='linear'):
+def initialize_population(population_size, model_type='linear'):
     if model_type == 'linear':
         return [np.random.randn(state_size, action_size) for _ in range(population_size)]
     else:
@@ -41,14 +34,14 @@ def fitness(chromosome, model_type='linear'):
             break
     return total_reward  # Note: total_reward is negative
 
-def selection(population, fitnesses):
+def selection(population, fitnesses, elite_size):
     min_fitness = min(fitnesses)
     offset = abs(min_fitness) + 1 if min_fitness < 0 else 0
     adjusted_fitnesses = [f + offset for f in fitnesses]
     selected = random.choices(population, weights=adjusted_fitnesses, k=len(population) - elite_size)
     return selected
 
-def crossover(parent1, parent2, model_type='linear'):
+def crossover(parent1, parent2, crossover_rate, model_type='linear'):
     if model_type == 'linear':
         if random.random() < crossover_rate:
             point = random.randint(1, state_size - 1)
@@ -71,7 +64,7 @@ def crossover(parent1, parent2, model_type='linear'):
                     setattr(child2, key, np.vstack((getattr(parent2, key)[:point, :], getattr(parent1, key)[point:, :])))
         return child1, child2
 
-def mutate(chromosome, model_type='linear'):
+def mutate(chromosome, mutation_rate, model_type='linear'):
     if model_type == 'linear':
         if random.random() < mutation_rate:
             index = random.randint(0, state_size - 1)
@@ -85,45 +78,3 @@ def mutate(chromosome, model_type='linear'):
                 else:
                     getattr(chromosome, key)[index, :] = np.random.randn(getattr(chromosome, key).shape[1])
     return chromosome
-
-def run_genetic_algorithm(model_type='linear'):
-    population = initialize_population(model_type)
-    best_fitness = -float('inf')
-    best_chromosome = None
-
-    for generation in range(num_generations):
-        fitnesses = [fitness(chromosome, model_type) for chromosome in population]
-        max_fitness = max(fitnesses)
-        if max_fitness > best_fitness:
-            best_fitness = max_fitness
-            best_chromosome = population[np.argmax(fitnesses)].copy()  # Ensure we copy the best chromosome
-        print(f'Generation {generation} | Best fitness: {max_fitness}')
-
-        elite_indices = np.argsort(fitnesses)[-elite_size:]
-        elites = [population[i] for i in elite_indices]
-
-        selected_population = selection(population, fitnesses)
-        next_population = []
-        for i in range(0, len(selected_population) - 1, 2):
-            parent1 = selected_population[i]
-            parent2 = selected_population[i + 1]
-            child1, child2 = crossover(parent1, parent2, model_type)
-            next_population.extend([mutate(child1, model_type), mutate(child2, model_type)])
-
-        next_population.extend(elites)
-
-        if len(selected_population) % 2 != 0:
-            next_population.append(selected_population[-1])
-
-        population = next_population
-
-    best_filename = f'best_chromosome_{model_type}.pkl'
-    with open(best_filename, 'wb') as f:
-        pickle.dump(best_chromosome, f)
-    print('Best solution found:', best_chromosome)
-
-if __name__ == "__main__":
-    print("Running genetic algorithm for linear model...")
-    run_genetic_algorithm(model_type='linear')
-    print("Running genetic algorithm for neural network model...")
-    run_genetic_algorithm(model_type='nn')
