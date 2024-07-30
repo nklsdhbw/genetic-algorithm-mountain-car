@@ -35,7 +35,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the trained model for MountainCar.')
     models = os.listdir("./models")
     if not models:
-        raise FileNotFoundError("No models found in the models directory. Please run train.py first.")
+        red = "\033[91m"
+        reset = "\033[0m"
+        print(f"{red}ERROR: No models found in the models directory. Please run train.py first.{reset}")
         exit(1)
     models = [re.findall(r"best_chromosome_(\w+).pkl", model) for model in models]
     models = sum(models, [])
@@ -45,4 +47,4 @@ if __name__ == "__main__":
     print(f"Running the best {args.model} model...")
     best_chromosome = load_model(f"./models/best_chromosome_{args.model}.pkl")
     total_reward = run_model(best_chromosome, model_type=args.model)
-    print(f"Total reward using the best linear model: {total_reward}")
+    print(f"Total reward using the best {args.model} model: {total_reward}")
