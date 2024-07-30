@@ -5,21 +5,13 @@ import pickle
 from nn import NeuralNetwork
 
 
-
-# Environment
-env = gym.make('MountainCar-v0')
-state_size = env.observation_space.shape[0]
-action_size = env.action_space.n
-hidden_size = 10
-
-
-def initialize_population(population_size, model_type='linear'):
+def initialize_population(population_size, model_type='linear', hidden_size=None, state_size=None, action_size=None):
     if model_type == 'linear':
         return [np.random.randn(state_size, action_size) for _ in range(population_size)]
     else:
         return [NeuralNetwork(hidden_size=hidden_size, state_size=state_size, action_size=action_size) for _ in range(population_size)]
 
-def fitness(chromosome, model_type='linear'):
+def fitness(chromosome, env, model_type='linear'):
     state, _ = env.reset()
     total_reward = 0
     for _ in range(200):
