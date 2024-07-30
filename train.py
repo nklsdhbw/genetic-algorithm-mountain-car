@@ -3,31 +3,47 @@ import argparse
 from geneticalgorithm import initialize_population, fitness, selection, crossover, mutate
 import numpy as np
 import gymnasium as gym
+from typing import List, Union
+from nn import NeuralNetwork
 
 # Environment
 env = gym.make('MountainCar-v0')
 STATE_SIZE = env.observation_space.shape[0]
 ACTION_SIZE = env.action_space.n
 
-def run_genetic_algorithm(model_type, population_size, num_generations, mutation_rate, crossover_rate, elite_size, hidden_size):
+def run_genetic_algorithm(
+    model_type: str, 
+    population_size: int, 
+    num_generations: int, 
+    mutation_rate: float, 
+    crossover_rate: float, 
+    elite_size: int, 
+    hidden_size: int
+) -> None:
     print(f"Running genetic algorithm for {model_type} model...")
-    population = initialize_population(population_size=population_size, model_type=model_type, hidden_size=hidden_size, state_size=STATE_SIZE, action_size=ACTION_SIZE)
-    best_fitness = -float('inf')
-    best_chromosome = None
+    population: List[Union[np.ndarray, NeuralNetwork]] = initialize_population(
+        population_size=population_size, 
+        model_type=model_type, 
+        hidden_size=hidden_size, 
+        state_size=STATE_SIZE, 
+        action_size=ACTION_SIZE
+    )
+    best_fitness: float = -float('inf')
+    best_chromosome: Union[np.ndarray, NeuralNetwork] = None
 
     for generation in range(num_generations):
-        fitnesses = [fitness(chromosome=chromosome, env=env, model_type=model_type) for chromosome in population]
-        max_fitness = max(fitnesses)
+        fitnesses: List[float] = [fitness(chromosome=chromosome, env=env, model_type=model_type) for chromosome in population]
+        max_fitness: float = max(fitnesses)
         if max_fitness > best_fitness:
             best_fitness = max_fitness
-            best_chromosome = population[np.argmax(fitnesses)].copy()  # Ensure we copy the best chromosome
+            best_chromosome = population[np.argmax(fitnesses)].copy()
         print(f'Generation {generation} | Best fitness: {max_fitness}')
 
-        elite_indices = np.argsort(fitnesses)[-elite_size:]
-        elites = [population[i] for i in elite_indices]
+        elite_indices: np.ndarray = np.argsort(fitnesses)[-elite_size:]
+        elites: List[Union[np.ndarray, NeuralNetwork]] = [population[i] for i in elite_indices]
 
-        selected_population = selection(population=population, fitnesses=fitnesses, elite_size=elite_size)
-        next_population = []
+        selected_population: List[Union[np.ndarray, NeuralNetwork]] = selection(population=population, fitnesses=fitnesses, elite_size=elite_size)
+        next_population: List[Union[np.ndarray, NeuralNetwork]] = []
         for i in range(0, len(selected_population) - 1, 2):
             parent1 = selected_population[i]
             parent2 = selected_population[i + 1]
@@ -41,7 +57,7 @@ def run_genetic_algorithm(model_type, population_size, num_generations, mutation
 
         population = next_population
 
-    best_filename = f'./models/best_chromosome_{model_type}.pkl'
+    best_filename: str = f'./models/best_chromosome_{model_type}.pkl'
     with open(best_filename, 'wb') as f:
         pickle.dump(best_chromosome, f)
     print('Best solution found:', best_chromosome)
@@ -70,7 +86,7 @@ if __name__ == "__main__":
     yellow = "\033[93m"
     reset = "\033[0m"
 
-    warnings = []
+    warnings: List[str] = []
     for param, default_value in defaults.items():
         if getattr(args, param) == default_value:
             warnings.append(f"{param} not set, using default value: {default_value}")

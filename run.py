@@ -4,17 +4,19 @@ import pickle
 import argparse
 import os
 import re
+from typing import Union
+from nn import NeuralNetwork
 
 # Environment
 env = gym.make('MountainCar-v0', render_mode='human')
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
-def load_model(filename):
+def load_model(filename: str) -> Union[np.ndarray, NeuralNetwork]:
     with open(filename, 'rb') as f:
         return pickle.load(f)
 
-def run_model(chromosome, model_type='linear'):
+def run_model(chromosome: Union[np.ndarray, NeuralNetwork], model_type: str = 'linear') -> float:
     state, _ = env.reset()
     total_reward = 0
     for _ in range(200):
