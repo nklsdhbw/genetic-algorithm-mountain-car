@@ -37,11 +37,12 @@ if __name__ == "__main__":
     if not models:
         red = "\033[91m"
         reset = "\033[0m"
-        print(f"{red}ERROR: No models found in the models directory. Please run train.py first.{reset}")
+        print(f"{red}ERROR: No models found in the models directory. Please run 'train.py --model' first.{reset}")
         exit(1)
     models = [re.findall(r"best_chromosome_(\w+).pkl", model) for model in models]
     models = sum(models, [])
-    parser.add_argument("--model", type=str, choices=models, required=True, help="Specify the model type to run (linear or nn).")
+    models_string = f"('{models[0]}'" + "".join([f", '{model}'" for model in models[1:]]) + ")"
+    parser.add_argument("--model", type=str, choices=models, required=True, help=f"Specify the model type to run {models_string}.")
     args = parser.parse_args()
 
     print(f"Running the best {args.model} model...")
