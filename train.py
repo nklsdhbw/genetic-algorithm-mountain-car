@@ -85,16 +85,17 @@ if __name__ == "__main__":
 
     yellow = "\033[93m"
     reset = "\033[0m"
+    
+    if args.model == "nn":
+        warnings: List[str] = []
+        for param, default_value in defaults.items():
+            if getattr(args, param) == default_value:
+                warnings.append(f"{param} not set, using default value: {default_value}")
 
-    warnings: List[str] = []
-    for param, default_value in defaults.items():
-        if getattr(args, param) == default_value:
-            warnings.append(f"{param} not set, using default value: {default_value}")
-
-    if warnings:
-        print(f"{yellow}WARNING: The following parameters were not set and will use default values:{reset}")
-        for warning in warnings:
-            print(f"{yellow}{warning}{reset}")
+        if warnings:
+            print(f"{yellow}WARNING: The following parameters were not set and will use default values:{reset}")
+            for warning in warnings:
+                print(f"{yellow}{warning}{reset}")
 
     run_genetic_algorithm(
         model_type=args.model, 
