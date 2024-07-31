@@ -85,7 +85,8 @@ pip install -r requirements.txt
 ## Usage
 
 
-1. ### Training the Models:
+ 1. ### Training the Models:
+ 
 
 To train the models using the genetic algorithm, run `train.py` with the desired parameters. Example:
 
@@ -110,11 +111,17 @@ If `--model` is `linear`, no additional arguments need to be provided.
 
 If these arguments are not set for the `nn` model, the default values will be used.
 
+2.  ### Running Grid Search:
+    
 
+To perform a grid search for hyperparameter optimization, use the  `--grid_search`  flag. Example:
 
+	`python train.py --model nn --grid_search` 
 
-
-2.  ### Running the Models:
+This will run a grid search over a predefined set of hyperparameters in the code and save the best model.
+**Note:** All other flags set when setting `--grid_search` flag will be ignored.
+ 
+3.  ### Running the Models:
 
 To run and evaluate the trained models, use `run.py` with the model type `('nn' or 'linear')`. Example:
 
