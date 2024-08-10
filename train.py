@@ -6,6 +6,7 @@ import gymnasium as gym
 from typing import List, Union, Dict, Any, Optional
 from nn import NeuralNetwork
 from itertools import product
+import matplotlib.pyplot as plt
 
 # Environment
 env = gym.make('MountainCar-v0')
@@ -32,13 +33,18 @@ def run_genetic_algorithm(
     best_fitness: float = -float('inf')
     best_chromosome: Union[np.ndarray, NeuralNetwork, None] = None
 
+    fitnesses_history: List[float] = []
+    generations: List[int] = []
     for generation in range(num_generations):
         fitnesses: List[float] = [fitness(chromosome=chromosome, env=env, model_type=model_type) for chromosome in population]
         max_fitness: float = max(fitnesses)
+        generations.append(generation)
+        fitnesses_history.append(best_fitness)
+
         if max_fitness > best_fitness:
             best_fitness = max_fitness
             best_chromosome = population[np.argmax(fitnesses)].copy()
-        
+            
         if generation % 10 == 0:
             print(f'Generation {generation} | Best fitness: {max_fitness}')
 
@@ -66,7 +72,13 @@ def run_genetic_algorithm(
     best_filename: str = f'./models/best_chromosome_{model_type}.pkl'
     with open(best_filename, 'wb') as f:
         pickle.dump(best_chromosome, f)
-    print('Best solution found:', best_chromosome)
+    print(f'Best solution found at generation {generations[np.argmax(fitnesses_history)]}:', best_chromosome)
+
+    plt.plot(generations, fitnesses_history)
+    plt.xlabel("Generation")
+    plt.ylabel("Fitness")
+    plt.title(f"Fitness over {num_generations} Generations")
+    plt.savefig(f"best_fitness_{model_type}.svg", format="svg")
     return {"best_fitness": best_fitness, "best_chromosome": best_chromosome}
 
 def grid_search(
@@ -154,12 +166,12 @@ if __name__ == "__main__":
         
         grid_search(model_type=args.model, grid_params=grid_params)
     else:
-        if args.model != "nn":
-            defaults.pop("hidden_size")
-        
         for param, default_value in defaults.items():
-            if getattr(args, param) is None:
-                warnings.append(f"{param} not set, using default value: {default_value}")
+            if param == 'hidden_size' and args.model == 'linear':
+                pass
+            else:
+                if getattr(args, param) is None:
+                    warnings.append(f"{param} not set, using default value: {default_value}")
 
         print(f"{YELLOW}WARNING: The following parameters were not set and will use default values:{RESET}")
         for warning in warnings:
