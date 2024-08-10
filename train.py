@@ -115,7 +115,26 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    defaults = {
+            'population_size': 100,
+            'num_generations': 100,
+            'mutation_rate': 0.1,
+            'crossover_rate': 0.5,
+            'elite_size': 5,
+            'hidden_size': 10
+        }
+    warnings: List[str] = []
+    YELLOW = "\033[93m"
+    RESET = "\033[0m"
     if args.grid_search:
+        for param, default_value in defaults.items():
+            if getattr(args, param) is not None:
+                warnings.append(f"{param}")
+
+        print(f"{YELLOW}WARNING: The following parameters were set but will be ignored due to grid search:{RESET}")
+        for warning in warnings:
+            print(f"{YELLOW}{warning}{RESET}")
+
         grid_params = {
             'population_size': [50, 100],
             'num_generations': [50, 100],
@@ -128,29 +147,16 @@ if __name__ == "__main__":
         
         grid_search(model_type=args.model, grid_params=grid_params)
     else:
-        defaults = {
-            'population_size': 100,
-            'num_generations': 100,
-            'mutation_rate': 0.1,
-            'crossover_rate': 0.5,
-            'elite_size': 5,
-            'hidden_size': 10
-        }
-
-        yellow = "\033[93m"
-        reset = "\033[0m"
-        
         if args.model != "nn":
             defaults.pop("hidden_size")
-        warnings: List[str] = []
+        
         for param, default_value in defaults.items():
             if getattr(args, param) is None:
                 warnings.append(f"{param} not set, using default value: {default_value}")
 
-        if warnings:
-            print(f"{yellow}WARNING: The following parameters were not set and will use default values:{reset}")
-            for warning in warnings:
-                print(f"{yellow}{warning}{reset}")
+        print(f"{YELLOW}WARNING: The following parameters were not set and will use default values:{RESET}")
+        for warning in warnings:
+            print(f"{YELLOW}{warning}{RESET}")
 
         run_genetic_algorithm(
             model_type=args.model, 
