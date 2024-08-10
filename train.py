@@ -103,16 +103,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the genetic algorithm for MountainCar.')
     parser.add_argument('--model', type=str, choices=['linear', 'nn'], required=True, help='Specify the model type to run (linear or nn).')
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--grid_search', action='store_true', help='Specify whether to perform grid search.')
+    parser.add_argument('--grid_search', type=bool, help='Specify whether to perform grid search.', required=False, default=False)
 
     # Only used if not grid search
-    parser.add_argument('--population_size', type=int, default=100, help='Specify the population size.')
-    parser.add_argument('--num_generations', type=int, default=100, help='Specify the number of generations.')
-    parser.add_argument('--mutation_rate', type=float, default=0.1, help='Specify the mutation rate.')
-    parser.add_argument('--crossover_rate', type=float, default=0.5, help='Specify the crossover rate.')
-    parser.add_argument('--elite_size', type=int, default=5, help='Specify the elite size.')
-    parser.add_argument('--hidden_size', type=int, default=10, help='Specify the hidden size for the neural network.')
+    parser.add_argument('--population_size', type=int, help='Specify the population size.')
+    parser.add_argument('--num_generations', type=int, help='Specify the number of generations.')
+    parser.add_argument('--mutation_rate', type=float, help='Specify the mutation rate.')
+    parser.add_argument('--crossover_rate', type=float, help='Specify the crossover rate.')
+    parser.add_argument('--elite_size', type=int, help='Specify the elite size.')
+    parser.add_argument('--hidden_size', type=int, help='Specify the hidden size for the neural network.')
 
     args = parser.parse_args()
 
@@ -145,7 +144,7 @@ if __name__ == "__main__":
             defaults.pop("hidden_size")
         warnings: List[str] = []
         for param, default_value in defaults.items():
-            if getattr(args, param) == default_value:
+            if getattr(args, param) is None:
                 warnings.append(f"{param} not set, using default value: {default_value}")
 
         if warnings:
@@ -155,10 +154,10 @@ if __name__ == "__main__":
 
         run_genetic_algorithm(
             model_type=args.model, 
-            population_size=args.population_size, 
-            num_generations=args.num_generations, 
-            mutation_rate=args.mutation_rate, 
-            crossover_rate=args.crossover_rate, 
-            elite_size=args.elite_size, 
-            hidden_size=args.hidden_size
+            population_size=args.population_siz if args.population_size is not None else defaults['population_size'], 
+            num_generations=args.num_generations if args.num_generations is not None else defaults['num_generations'], 
+            mutation_rate=args.mutation_rate if args.mutation_rate is not None else defaults['mutation_rate'], 
+            crossover_rate=args.crossover_rate if args.crossover_rate is not None else defaults['crossover_rate'], 
+            elite_size=args.elite_size if args.elite_size is not None else defaults['elite_size'], 
+            hidden_size=args.hidden_size if args.hidden_size is not None else defaults['hidden_size']
         )
