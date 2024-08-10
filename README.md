@@ -1,7 +1,7 @@
-
-
 # 🚗 Solving OpenAI's Gymnasiums Mountain Car Problem with a generic algorithm
+
 ## Project Overview
+
 This project implements a genetic algorithm to solve the MountainCar-v0 environment from OpenAI's Gymnasium. The algorithm uses two types of models: a linear model and a neural network model. The genetic algorithm optimizes the models to achieve the best performance in the MountainCar-v0 environment.
 
 ## 📂 Directory Structure
@@ -28,21 +28,22 @@ project-root/
 ## 📄 Files Description
 
 1. **geneticalgorithm.py**:
+
    - Contains the main genetic algorithm functions, including initialization, fitness evaluation, selection, crossover, and mutation.
-
 2. **nn.py**:
+
    - Defines the `NeuralNetwork` class used for the neural network model in the genetic algorithm.
-
 3. **requirements.txt**:
+
    - Lists the required Python packages for the project.
-
 4. **run.py**:
+
    - Loads and runs the trained models to evaluate their performance in the MountainCar-v0 environment. It supports both `linear`  and `nn` (neural network)  models.
-
 5. **train.py**:
-   - Trains the models using the genetic algorithm and saves the best models in the `models` directory. You can choose between `linear`or `nn` as model type. This will also be discussed later.
 
+   - Trains the models using the genetic algorithm and saves the best models in the `models` directory. You can choose between `linear`or `nn` as model type. This will also be discussed later.
 6. **__init__.py**:
+
    - Initialization file for the project module.
 
 ---
@@ -50,29 +51,36 @@ project-root/
 ## ⚙️ Installation
 
 ### 🐍 Install Python 3.12
+
 Download and install [Python3.12](https://www.python.org/downloads/)
 
 ### ⬇️ Clone the repository to your local machine
-	git clone https://github.com/nklsdhbw/genetic-algorithm-mountain-car.git
+
+```python
+git clone https://github.com/nklsdhbw/genetic-algorithm-mountain-car.git
+```
+
 and change to the project directory
+
 ### 🔨 Create a virtual environment using `venv`:
 
 ```sh
 python3.12 -m venv .venv
 ```
+
 ### 🚀 Activate the virtual environment:
 
-   - On Windows:
+- On Windows:
 
-   ```sh
+```sh
    .venv\Scripts\activate
-   ```
+```
 
-   - On Unix or MacOS:
+- On Unix or MacOS:
 
-   ```sh
+```sh
    source .venvbin/activate
-   ```
+```
 
 ### 📦 Install the required packages using pip:
 
@@ -84,20 +92,19 @@ pip install -r requirements.txt
 
 ## Usage
 
+1. ### Training the Models:
 
- 1. ### Training the Models:
- 
-
-To train the models using the genetic algorithm, run `train.py` with the desired parameters. Example:
+To train the models using the genetic algorithm, run `python train.py --model` with the desired parameters. You need to pass `linear` or `nn` as argument value.
+Other hyperparameters can also be set as shown in the following example
+Example:
 
 ```sh
 python train.py --model nn --population_size 150 --num_generations 200 --mutation_rate 0.05 --crossover_rate 0.7 --elite_size 10 --hidden_size 20
 ```
 
-Note: The following arguments except `--model` are only required when `--model` is set to `nn`. 
-If `--model` is `linear`, no additional arguments need to be provided.
-
 **Arguments for `train.py`:**
+
+If the hyperparameters are not set, the default values will be used.
 
 - `--model`: Specify the model type to run (`linear` or `nn`).
 - `--population_size`: Specify the population size (default: 100).
@@ -107,21 +114,16 @@ If `--model` is `linear`, no additional arguments need to be provided.
 - `--elite_size`: Specify the elite size (default: 5).
 - `--hidden_size`: Specify the hidden size for the neural network (default: 10).
 
-**Default Values:**
-
-If these arguments are not set for the `nn` model, the default values will be used.
-
-2.  ### Running Grid Search:
-    
+2. ### Running Grid Search:
 
 To perform a grid search for hyperparameter optimization, use the  `--grid_search`  flag. Example:
 
-	`python train.py --model nn --grid_search` 
+    `python train.py --model nn --grid_search`
 
 This will run a grid search over a predefined set of hyperparameters in the code and save the best model.
 **Note:** All other flags set when setting `--grid_search` flag will be ignored.
- 
-3.  ### Running the Models:
+
+3. ### Running the Models:
 
 To run and evaluate the trained models, use `run.py` with the model type `('nn' or 'linear')`. Example:
 
