@@ -113,6 +113,7 @@ If the hyperparameters are not set, the default values will be used.
 - `--crossover_rate`: Specify the crossover rate (default: 0.5).
 - `--elite_size`: Specify the elite size (default: 5).
 - `--hidden_size`: Specify the hidden size for the neural network (default: 10).
+- `--grid_search`: Specify whether grid search for hyperparameter optimization will be used (default: False)
 
 2. ### Running Grid Search:
 
