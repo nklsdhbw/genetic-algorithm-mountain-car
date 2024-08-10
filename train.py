@@ -3,7 +3,7 @@ import argparse
 from geneticalgorithm import initialize_population, fitness, selection, crossover, mutate
 import numpy as np
 import gymnasium as gym
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Optional
 from nn import NeuralNetwork
 from itertools import product
 
@@ -19,7 +19,7 @@ def run_genetic_algorithm(
     mutation_rate: float, 
     crossover_rate: float, 
     elite_size: int, 
-    hidden_size: int
+    hidden_size: Optional[int] = None
 ) -> Dict[str, Any]:
     print(f"Running genetic algorithm for {model_type} model...")
     population: List[Union[np.ndarray, NeuralNetwork]] = initialize_population(
@@ -30,7 +30,7 @@ def run_genetic_algorithm(
         action_size=ACTION_SIZE
     )
     best_fitness: float = -float('inf')
-    best_chromosome: Union[np.ndarray, NeuralNetwork] = None
+    best_chromosome: Union[np.ndarray, NeuralNetwork, None] = None
 
     for generation in range(num_generations):
         fitnesses: List[float] = [fitness(chromosome=chromosome, env=env, model_type=model_type) for chromosome in population]
@@ -48,10 +48,13 @@ def run_genetic_algorithm(
         selected_population: List[Union[np.ndarray, NeuralNetwork]] = selection(population=population, fitnesses=fitnesses, elite_size=elite_size)
         next_population: List[Union[np.ndarray, NeuralNetwork]] = []
         for i in range(0, len(selected_population) - 1, 2):
-            parent1 = selected_population[i]
-            parent2 = selected_population[i + 1]
+            parent1: Union[np.ndarray, NeuralNetwork] = selected_population[i]
+            parent2: Union[np.ndarray, NeuralNetwork] = selected_population[i + 1]
             child1, child2 = crossover(parent1=parent1, parent2=parent2, crossover_rate=crossover_rate, state_size=STATE_SIZE, model_type=model_type)
-            next_population.extend([mutate(chromosome=child1, mutation_rate=mutation_rate, state_size=STATE_SIZE, action_size=ACTION_SIZE, model_type=model_type), mutate(chromosome=child2, mutation_rate=mutation_rate, state_size=STATE_SIZE, action_size=ACTION_SIZE, model_type=model_type)])
+            next_population.extend([
+                mutate(chromosome=child1, mutation_rate=mutation_rate, state_size=STATE_SIZE, action_size=ACTION_SIZE, model_type=model_type), 
+                mutate(chromosome=child2, mutation_rate=mutation_rate, state_size=STATE_SIZE, action_size=ACTION_SIZE, model_type=model_type)
+            ])
 
         next_population.extend(elites)
 
@@ -66,18 +69,21 @@ def run_genetic_algorithm(
     print('Best solution found:', best_chromosome)
     return {"best_fitness": best_fitness, "best_chromosome": best_chromosome}
 
-def grid_search(model_type: str, grid_params: Dict[str, List[Any]]) -> None:
+def grid_search(
+    model_type: str, 
+    grid_params: Dict[str, List[Any]]
+) -> None:
     keys, values = zip(*grid_params.items())
-    best_fitness = -float('inf')
-    best_model = None
-    best_params = None
-    combinations = [v for v in product(*values)]
+    best_fitness: float = -float('inf')
+    best_model: Union[np.ndarray, NeuralNetwork, None] = None
+    best_params: Optional[Dict[str, Any]] = None
+    combinations: List[Any] = [v for v in product(*values)]
 
     print(f"Running grid search for {model_type} model {len(combinations)} times...")
     for v in product(*values):
-        params = dict(zip(keys, v))
+        params: Dict[str, Any] = dict(zip(keys, v))
         print(f"Running grid search with parameters: {params}")
-        result = run_genetic_algorithm(
+        result: Dict[str, Any] = run_genetic_algorithm(
             model_type=model_type, 
             population_size=params['population_size'], 
             num_generations=params['num_generations'], 
@@ -91,7 +97,7 @@ def grid_search(model_type: str, grid_params: Dict[str, List[Any]]) -> None:
             best_model = result['best_chromosome']
             best_params = params
     
-    best_filename = f'./models/best_chromosome_{model_type}.pkl'
+    best_filename: str = f'./models/best_chromosome_{model_type}.pkl'
     with open(best_filename, 'wb') as f:
         pickle.dump(best_model, f)
     
@@ -115,17 +121,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    defaults = {
-            'population_size': 100,
-            'num_generations': 100,
-            'mutation_rate': 0.1,
-            'crossover_rate': 0.5,
-            'elite_size': 5,
-            'hidden_size': 10
-        }
+    defaults: Dict[str, Any] = {
+        'population_size': 100,
+        'num_generations': 100,
+        'mutation_rate': 0.1,
+        'crossover_rate': 0.5,
+        'elite_size': 5,
+        'hidden_size': 10
+    }
     warnings: List[str] = []
-    YELLOW = "\033[93m"
-    RESET = "\033[0m"
+    YELLOW: str = "\033[93m"
+    RESET: str = "\033[0m"
+    
     if args.grid_search:
         for param, default_value in defaults.items():
             if getattr(args, param) is not None:
@@ -135,7 +142,7 @@ if __name__ == "__main__":
         for warning in warnings:
             print(f"{YELLOW}{warning}{RESET}")
 
-        grid_params = {
+        grid_params: Dict[str, List[Any]] = {
             'population_size': [50, 100],
             'num_generations': [50, 100],
             'mutation_rate': [0.05, 0.1],
@@ -160,7 +167,7 @@ if __name__ == "__main__":
 
         run_genetic_algorithm(
             model_type=args.model, 
-            population_size=args.population_siz if args.population_size is not None else defaults['population_size'], 
+            population_size=args.population_size if args.population_size is not None else defaults['population_size'], 
             num_generations=args.num_generations if args.num_generations is not None else defaults['num_generations'], 
             mutation_rate=args.mutation_rate if args.mutation_rate is not None else defaults['mutation_rate'], 
             crossover_rate=args.crossover_rate if args.crossover_rate is not None else defaults['crossover_rate'], 

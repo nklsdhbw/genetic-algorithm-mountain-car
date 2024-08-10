@@ -14,7 +14,11 @@ class NeuralNetwork:
         return z2
 
     def copy(self) -> 'NeuralNetwork':
-        new_nn = NeuralNetwork(hidden_size=self.w1.shape[1], state_size=self.w1.shape[0], action_size=self.w2.shape[1])
+        new_nn: NeuralNetwork = NeuralNetwork(
+            hidden_size=self.w1.shape[1], 
+            state_size=self.w1.shape[0], 
+            action_size=self.w2.shape[1]
+        )
         new_nn.w1 = np.copy(self.w1)
         new_nn.b1 = np.copy(self.b1)
         new_nn.w2 = np.copy(self.w2)
