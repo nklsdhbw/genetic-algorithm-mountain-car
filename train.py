@@ -72,6 +72,15 @@ def run_genetic_algorithm(
     best_filename: str = f'./models/best_chromosome_{model_type}.pkl'
     with open(best_filename, 'wb') as f:
         pickle.dump(best_chromosome, f)
+    with open(f"hyperparameters_{model_type}.txt", "w") as f:
+        f.write(f"Best hyperparameters for {model_type} model:\n")
+        f.write(f"Population size: {population_size}\n")
+        f.write(f"Number of generations: {num_generations}\n")
+        f.write(f"Mutation rate: {mutation_rate}\n")
+        f.write(f"Crossover rate: {crossover_rate}\n")
+        f.write(f"Elite size: {elite_size}\n")
+        if model_type == "nn":
+            f.write(f"Hidden size: {hidden_size}\n")
     print(f'Best solution found at generation {generations[np.argmax(fitnesses_history)]}:', best_chromosome)
 
     plt.plot(generations, fitnesses_history)
