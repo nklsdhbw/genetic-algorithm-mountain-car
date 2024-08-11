@@ -46,6 +46,10 @@ project-root/
 
    - Initialization file for the project module.
 
+7. **compare.py**:
+
+   - Compares the results of the nn and the linear model, if both were trained.
+
 ---
 
 ## ⚙️ Installation
@@ -131,6 +135,14 @@ To run and evaluate the trained models, use `run.py` with the model type `('nn' 
 ```sh
 python run.py --model nn
 ```
+
+4. ### Compare the Models:
+
+If both models were trained, you can compare the results of them via the following command:
+
+````
+python compare.py
+````
 
 ## Acknowledgments
 
